@@ -36,6 +36,12 @@ const run_server = async () => {
 		const db = db_client.db("zapshift");
 		// Define collections
 		const parcelsColl = db.collection("parcels");
+		// GET: Get all or filtered parcels
+		app.get("/parcels", async (req, res) => {
+			const query = {};
+			const result = await parcelsColl.find(query).toArray();
+			res.send(result);
+		});
 		// Ping for successful connection confirmation
 		await db_client.db("admin").command({ ping: 1 });
 		console.log("Pinged. Successfully connected to MongoDB!");
