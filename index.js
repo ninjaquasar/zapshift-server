@@ -36,11 +36,17 @@ const run_server = async () => {
 		const db = db_client.db("zapshift");
 		// Define collections
 		const parcelsColl = db.collection("parcels");
-		// GET: Get all or filtered parcels
+		// GET: Fetch all or filtered parcels
 		app.get("/parcels", async (req, res) => {
 			const query = {};
 			const result = await parcelsColl.find(query).toArray();
 			res.send(result);
+		});
+		// POST: Create a parcel
+		app.post("/parcels", async (req, res) => {
+			const newParcel = req.body;
+			const result = await parcelsColl.insertOne(newParcel);
+			res.status(201).send(result);
 		});
 		// Ping for successful connection confirmation
 		await db_client.db("admin").command({ ping: 1 });
