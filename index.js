@@ -38,8 +38,30 @@ const run_server = async () => {
 		const parcelsColl = db.collection("parcels");
 		// GET: Fetch all or filtered parcels
 		app.get("/parcels", async (req, res) => {
+			// Get query params
+			const {
+				sort,
+				booked_by,
+				delivery_status,
+				parcel_type,
+				payment_status,
+				sender_region,
+				receiver_region,
+			} = req.query;
+			// Initialize empty `query` and `options`
 			const query = {};
-			const result = await parcelsColl.find(query).toArray();
+			const options = {};
+			// Filter documents
+			booked_by ? (query.booked_by = booked_by) : query;
+			parcel_type ? (query["parcel.type"] = parcel_type) : query;
+			delivery_status ? (query["delivery.status"] = delivery_status) : query;
+			payment_status ? (query["payment.status"] = payment_status) : query;
+			sender_region ? (query["sender.region"] = sender_region) : query;
+			receiver_region ? (query["receiver.region"] = receiver_region) : query;
+			// Sort documents
+			if (sort === "created_at") options.sort = { booked_at: -1 };
+			// Send result documents
+			const result = await parcelsColl.find(query, options).toArray();
 			res.send(result);
 		});
 		// POST: Create a parcel
