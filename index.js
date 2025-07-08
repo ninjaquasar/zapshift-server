@@ -70,6 +70,13 @@ const run_server = async () => {
 			const result = await parcelsColl.insertOne(newParcel);
 			res.status(201).send(result);
 		});
+		// DELETE: Delete a parcel
+		app.delete("/parcels/:id", async (req, res) => {
+			const id = req.params.id;
+			const query = { _id: new ObjectId(id) };
+			const result = await parcelsColl.deleteOne(query);
+			res.status(204).send(result);
+		});
 		// Ping for successful connection confirmation
 		await db_client.db("admin").command({ ping: 1 });
 		console.log("Pinged. Successfully connected to MongoDB!");
